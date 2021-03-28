@@ -10,10 +10,11 @@ import (
 )
 
 type Config struct {
-	FirebaseApp *firebase.App
-	FirebaseDB  *db.Client
-	FbRootRef   *db.Ref
-	FbUsersRef  *db.Ref
+	FirebaseApp    *firebase.App
+	FirebaseDB     *db.Client
+	FbRootRef      *db.Ref
+	FbUsersRef     *db.Ref
+	FbGameRoomsRef *db.Ref
 }
 
 var config Config
@@ -22,12 +23,14 @@ func InitConfig() {
 	firebaseApp, firebaseDB := initFirebaseApp()
 	fbRootRef := firebaseDB.NewRef("")
 	fbUsersRef := fbRootRef.Child("users")
+	fbGameRoomsRef := fbRootRef.Child("game_rooms")
 
 	config = Config{
-		FirebaseApp: firebaseApp,
-		FirebaseDB:  firebaseDB,
-		FbRootRef:   fbRootRef,
-		FbUsersRef:  fbUsersRef,
+		FirebaseApp:    firebaseApp,
+		FirebaseDB:     firebaseDB,
+		FbRootRef:      fbRootRef,
+		FbUsersRef:     fbUsersRef,
+		FbGameRoomsRef: fbGameRoomsRef,
 	}
 }
 
