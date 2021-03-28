@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/dgrijalva/jwt-go"
@@ -24,7 +23,7 @@ func Register(reqUser models.User) (models.User, error) {
 		return user, errors.New("username already taken")
 	}
 
-	reqUser.AuthToken, _ = EncodeToken(reqUser)
+	reqUser.AuthToken, _ = encodeToken(reqUser)
 
 	newUser := models.User{
 		Username:         reqUser.Username,
@@ -67,7 +66,7 @@ func Login(reqUser models.User) (models.User, error) {
 
 }
 
-func EncodeToken(reqUser models.User) (string, error) {
+func encodeToken(reqUser models.User) (string, error) {
 
 	lulErJwtSecret := os.Getenv("GO_LULER_JWT_SECRET")
 	tokenData := jwt.MapClaims{}
@@ -76,7 +75,7 @@ func EncodeToken(reqUser models.User) (string, error) {
 	token, err := claimToken.SignedString([]byte(lulErJwtSecret))
 	if err != nil {
 
-		fmt.Println(err)
+		log.Errorf(context.Background(), "Error Token %v", err)
 		return "", err
 	}
 	return token, nil
