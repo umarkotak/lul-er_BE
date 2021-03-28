@@ -14,6 +14,7 @@ func Register(c *gin.Context) {
 	result, err := service.Register(user)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
+		return
 	}
 
 	utils.RenderSuccess(c, result)

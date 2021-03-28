@@ -24,3 +24,15 @@ func GetUserByUsername(username string) (models.User, error) {
 
 	return user, nil
 }
+
+func CreateUser(user models.User) (models.User, error) {
+	if user.Username == "" {
+		return user, nil
+	}
+
+	fbUsersRef := config.GetConfig().FbUsersRef
+	fbUserRef := fbUsersRef.Child(user.Username)
+	fbUserRef.Set(context.Background(), user)
+
+	return user, nil
+}
