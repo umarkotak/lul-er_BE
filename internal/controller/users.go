@@ -19,3 +19,18 @@ func Register(c *gin.Context) {
 
 	utils.RenderSuccess(c, result)
 }
+
+func Login(c *gin.Context) {
+
+	var user models.User
+	c.BindJSON(&user)
+
+	result, err := service.Login(user)
+	if err != nil {
+		utils.RenderError(c, 400, err.Error())
+		return
+	}
+
+	utils.RenderSuccess(c, result)
+
+}

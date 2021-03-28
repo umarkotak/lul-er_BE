@@ -19,6 +19,8 @@ func Start() {
 
 	router.POST("/users/register", controller.Register)
 
+	router.POST("/users/login", controller.Login)
+
 	router.Run(":" + getPort())
 }
 
