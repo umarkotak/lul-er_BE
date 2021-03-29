@@ -20,6 +20,7 @@ func Start() {
 	router.GET("/ping", controller.Ping)
 	router.POST("/users/register", controller.Register)
 	router.POST("/users/login", controller.Login)
+	router.POST("/game_rooms", controller.CreateGameRoom)
 
 	router.Run(":" + getPort())
 }

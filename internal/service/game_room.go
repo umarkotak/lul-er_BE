@@ -10,3 +10,8 @@ func GetGameRooms() ([]models.GameRoom, error) {
 
 	return gameRooms, err
 }
+
+func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
+	gameRoom, err := repository.CreateGameRoom(gameRoom)
+	return gameRoom, err
+}
