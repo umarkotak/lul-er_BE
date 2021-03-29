@@ -5,6 +5,9 @@ import (
 )
 
 func RenderSuccess(c *gin.Context, data interface{}) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	c.Header("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 	c.JSON(
 		200,
 		gin.H{
@@ -16,6 +19,9 @@ func RenderSuccess(c *gin.Context, data interface{}) {
 }
 
 func RenderError(c *gin.Context, statusCode int, message string) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	c.Header("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 	c.JSON(
 		statusCode,
 		gin.H{
