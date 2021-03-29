@@ -22,7 +22,7 @@ func Start() {
 	router.POST("/users/login", controller.Login)
 	router.POST("/game_rooms", controller.CreateGameRoom)
 
-	router.Run(":" + "3000")
+	router.Run(":" + getPort())
 }
 
 func getPort() string {
