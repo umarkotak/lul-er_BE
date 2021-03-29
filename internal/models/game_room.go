@@ -1,6 +1,6 @@
 package models
 
-type Room struct {
+type GameRoom struct {
 	ID 					string `json:"id"`
 	RoomMasterUsername 	string `json:"room_master_username"`
 	Mode 				string `json:"mode"`

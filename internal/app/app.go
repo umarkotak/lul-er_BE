@@ -20,9 +20,9 @@ func Start() {
 	router.GET("/ping", controller.Ping)
 	router.POST("/users/register", controller.Register)
 	router.POST("/users/login", controller.Login)
-	router.POST("/game_rooms", controller.CreateRoom)
+	router.POST("/game_rooms", controller.CreateGameRoom)
 
-	router.Run(":" + getPort())
+	router.Run(":" + "3000")
 }
 
 func getPort() string {
