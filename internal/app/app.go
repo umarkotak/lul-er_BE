@@ -17,13 +17,20 @@ func Start() {
 	router.Use(gin.Logger())
 	router.Use(CORSMiddleware())
 
+	// check server
 	router.GET("/ping", controller.Ping)
+
+	// user api
 	router.POST("/users/register", controller.Register)
 	router.POST("/users/login", controller.Login)
-	router.POST("/game_rooms", controller.CreateGameRoom)
-	router.GET("/get_rooms", controller.GetGameRooms)
+
+	// game service
+
+	router.POST("/games/create_room", controller.CreateGameRoom)
+	router.GET("/games/join_room", controller.GetGameRooms)
 
 	router.Run(":" + getPort())
+	// router.Run(":" + "3000")
 }
 
 func getPort() string {

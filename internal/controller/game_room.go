@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/umarkotak/lul-er_BE/internal/models"
 	"github.com/umarkotak/lul-er_BE/internal/service"
@@ -8,9 +10,18 @@ import (
 )
 
 func GetGameRooms(c *gin.Context) {
-	result, err := service.GetGameRooms()
+
+	a := c.Request.Header.Get("Authorization")
+
+	username, err := service.DecodeToken(a)
 	if err != nil {
 		utils.RenderError(c, 401, err.Error())
+		return
+	}
+	fmt.Println(username)
+	result, err := service.GetGameRooms()
+	if err != nil {
+		utils.RenderError(c, 400, err.Error())
 		return
 	}
 

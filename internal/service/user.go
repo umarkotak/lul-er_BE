@@ -3,7 +3,8 @@ package service
 import (
 	"context"
 	"errors"
-	"os"
+	"fmt"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/umarkotak/lul-er_BE/internal/models"
@@ -68,16 +69,35 @@ func Login(reqUser models.User) (models.User, error) {
 
 func encodeToken(reqUser models.User) (string, error) {
 
-	lulErJwtSecret := os.Getenv("GO_LULER_JWT_SECRET")
-	tokenData := jwt.MapClaims{}
-	tokenData["username"] = reqUser.Username
-	claimToken := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenData)
-	token, err := claimToken.SignedString([]byte(lulErJwtSecret))
-	if err != nil {
+	claim := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer: reqUser.Username,
+	})
 
+	token, err := claim.SignedString([]byte("secret"))
+
+	if err != nil {
 		log.Errorf(context.Background(), "Error Token %v", err)
 		return "", err
 	}
 	return token, nil
 
+}
+
+func DecodeToken(claimToken string) (string, error) {
+
+	clearToken := strings.Split(claimToken, " ")[1]
+
+	token, err := jwt.ParseWithClaims(clearToken, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
+		return []byte("secret"), nil
+	})
+
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+
+	claims := token.Claims.(*jwt.StandardClaims)
+	claimUser := claims.Issuer
+
+	return claimUser, nil
 }
