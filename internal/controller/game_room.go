@@ -33,9 +33,18 @@ func GetGameRooms(c *gin.Context) {
 
 func CreateGameRoom(c *gin.Context) {
 
+	a := c.Request.Header.Get("Authorization")
+
 	var create_game_room models.GameRoom
 	c.BindJSON(&create_game_room)
 
+	username, err := service.DecodeToken(a)
+	if err != nil {
+		utils.RenderError(c, 401, err.Error())
+		return
+	}
+
+	create_game_room.RoomMasterUsername = username
 	result, err := service.CreateGameRoom(create_game_room)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
