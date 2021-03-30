@@ -27,7 +27,7 @@ func Start() {
 	// game service
 
 	router.POST("/games/create_room", controller.CreateGameRoom)
-	router.GET("/games/join_room", controller.GetGameRooms)
+	router.POST("/games/join_room", controller.GetGameRooms)
 
 	router.Run(":" + getPort())
 	// router.Run(":" + "3000")

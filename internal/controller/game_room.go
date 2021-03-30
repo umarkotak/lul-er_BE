@@ -13,13 +13,16 @@ func GetGameRooms(c *gin.Context) {
 
 	a := c.Request.Header.Get("Authorization")
 
+	var roomData models.GameRoom
+	c.BindJSON(&roomData)
+
 	username, err := service.DecodeToken(a)
 	if err != nil {
 		utils.RenderError(c, 401, err.Error())
 		return
 	}
 	fmt.Println(username)
-	result, err := service.GetGameRooms()
+	result, err := service.JoinGameRoom(roomData)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
 		return
