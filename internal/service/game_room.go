@@ -21,7 +21,6 @@ func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
 }
 
 func JoinGameRoom(reqUser models.GameRoom) (models.GameRoom, error) {
-
 	gameRoom, err := repository.JoinGameRoom(reqUser.ID)
 
 	if err != nil {
@@ -30,7 +29,6 @@ func JoinGameRoom(reqUser models.GameRoom) (models.GameRoom, error) {
 	}
 
 	if gameRoom.ID == "" {
-
 		return gameRoom, errors.New("Room not found")
 	}
 
