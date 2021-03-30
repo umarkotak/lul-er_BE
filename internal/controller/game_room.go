@@ -8,12 +8,9 @@ import (
 )
 
 func GetGameRooms(c *gin.Context) {
-	var user models.User
-	c.BindJSON(&user)
-
-	result, err := service.Register(user)
+	result, err := service.GetGameRooms()
 	if err != nil {
-		utils.RenderError(c, 400, err.Error())
+		utils.RenderError(c, 401, err.Error())
 		return
 	}
 

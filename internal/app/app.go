@@ -21,6 +21,7 @@ func Start() {
 	router.POST("/users/register", controller.Register)
 	router.POST("/users/login", controller.Login)
 	router.POST("/game_rooms", controller.CreateGameRoom)
+	router.GET("/get_rooms", controller.GetGameRooms)
 
 	router.Run(":" + getPort())
 }
