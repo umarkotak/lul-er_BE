@@ -25,20 +25,6 @@ func GetGameRooms() ([]models.GameRoom, error) {
 
 func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
 
-	var b models.GamePlayers
-
-	a := models.GamePlayer{
-		Username: gameRoom.RoomMasterUsername,
-		Status:   "active",
-	}
-
-	b = append(b, a)
-
-	// b := models.PlayersData{
-	// 	Users: a,
-	// }
-
-	gameRoom.GamePlayers = b
 	fbGameRoomsRef := config.GetConfig().FbGameRoomsRef
 	gameRoom.ID = fmt.Sprintf("%v", time.Now().Unix())
 
