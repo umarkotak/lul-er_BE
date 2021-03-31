@@ -34,24 +34,22 @@ func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
 	return gameRoom, nil
 }
 
-func JoinGameRoom(roomID string, user string) (models.GameRoom, error) {
+func JoinGameRoom(gameRoom models.GameRoom, username string) (models.GameRoom, error) {
 
 	var ID models.GameRoom
-	if roomID == "" {
-		return ID, nil
-	}
 
 	fbGameRoomsRef := config.GetConfig().FbGameRoomsRef
-	fbGameRoomRef2 := fbGameRoomsRef.Child(roomID).Child("game_players")
-	fmt.Println(fbGameRoomRef2)
+	fbGameRoomRef := fbGameRoomsRef.Child(gameRoom.ID).Child("game_players").Child(username)
 
-	// a := "test"
-	// fbGameRoomRef2.Set(context.Background(), a)
+	gamePlayer := models.GamePlayer{
+		Username: username,
+		Status:   "joined",
+	}
 
-	fbGameRoomRef := fbGameRoomsRef.Child(roomID)
+	fbGameRoomRef.Set(context.Background(), gamePlayer)
 
-	fmt.Println(user)
-	err := fbGameRoomRef.Get(context.Background(), &ID)
+	fbGameRoomRef2 := fbGameRoomsRef.Child(gameRoom.ID)
+	err := fbGameRoomRef2.Get(context.Background(), &ID)
 	if err != nil {
 		return ID, err
 	}
