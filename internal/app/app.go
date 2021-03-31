@@ -27,10 +27,10 @@ func Start() {
 	// game service
 
 	router.POST("/games/create_room", controller.CreateGameRoom)
-	router.POST("/games/join_room", controller.GetGameRooms)
+	router.POST("/games/join_room/:game-room-id", controller.GetGameRooms)
 
-	router.Run(":" + getPort())
-	// router.Run(":" + "3000")
+	// router.Run(":" + getPort())
+	router.Run(":" + "3000")
 }
 
 func getPort() string {
