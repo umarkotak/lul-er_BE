@@ -16,12 +16,20 @@ func GetGameRooms() ([]models.GameRoom, error) {
 }
 
 func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
+
+	gamePlayer := models.GamePlayer{
+		Username: gameRoom.RoomMasterUsername,
+		Status:   "joined",
+	}
+	gameRoom.GamePlayers = map[string]models.GamePlayer{}
+	gameRoom.GamePlayers[gameRoom.RoomMasterUsername] = gamePlayer
+
 	gameRoom, err := repository.CreateGameRoom(gameRoom)
 	return gameRoom, err
 }
 
-func JoinGameRoom(reqUser models.GameRoom) (models.GameRoom, error) {
-	gameRoom, err := repository.JoinGameRoom(reqUser.ID)
+func JoinGameRoom(reqUser models.GameRoom, username string) (models.GameRoom, error) {
+	gameRoom, err := repository.JoinGameRoom(reqUser.ID, username)
 
 	if err != nil {
 		log.Errorf(context.Background(), "Error GetUserByUsername %v", err)
