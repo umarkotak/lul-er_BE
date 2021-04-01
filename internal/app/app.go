@@ -23,17 +23,21 @@ func Start() {
 	router.GET("/ping", controller.Ping)
 
 	// user api
-	router.POST("/users/register", controller.Register)
-	router.POST("/users/login", controller.Login)
+
+	userRouter := router.Group("/users")
+	userRouter.POST("/login", controller.Login)
+	userRouter.POST("/register", controller.Register)
 
 	// game service
-	router.Use(AuthMiddleware())
-	router.GET("/game_rooms", controller.GetGameRooms)
-	router.POST("/game_rooms", controller.CreateGameRoom)
-	router.POST("/game_rooms/:game_room_id/join", controller.JoinGameRoom)
 
-	// router.Run(":" + getPort())
-	router.Run(":" + "3000")
+	gameRouter := router.Group("/game_rooms")
+	gameRouter.Use(AuthMiddleware())
+	gameRouter.GET("/", controller.GetGameRooms)
+	gameRouter.POST("/", controller.CreateGameRoom)
+	gameRouter.POST("/:game_room_id/join", controller.JoinGameRoom)
+
+	router.Run(":" + getPort())
+	// router.Run(":" + "3000")
 }
 
 func getPort() string {

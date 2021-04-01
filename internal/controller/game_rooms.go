@@ -10,10 +10,6 @@ import (
 )
 
 func GetGameRooms(c *gin.Context) {
-	gameRoomID := c.Param("game-room-id")
-
-	var roomData models.GameRoom
-	roomData.ID = gameRoomID
 
 	results, err := service.GetGameRooms()
 	if err != nil {
