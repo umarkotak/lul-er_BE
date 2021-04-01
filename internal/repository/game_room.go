@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -23,10 +24,27 @@ func GetGameRooms() ([]models.GameRoom, error) {
 	return gameRooms, nil
 }
 
-func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
+func GetGameRoom(gameRoomID string) (models.GameRoom, error) {
+	var gameRoom models.GameRoom
+
+	if gameRoomID == "" {
+		return gameRoom, errors.New("game room id can't be blank")
+	}
 
 	fbGameRoomsRef := config.GetConfig().FbGameRoomsRef
-	gameRoom.ID = fmt.Sprintf("%v", time.Now().Unix())
+	fbGameRoomRef := fbGameRoomsRef.Child(gameRoomID)
+
+	err := fbGameRoomRef.Get(context.Background(), &gameRoom)
+	if err != nil {
+		return gameRoom, err
+	}
+
+	return gameRoom, nil
+}
+
+func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
+	fbGameRoomsRef := config.GetConfig().FbGameRoomsRef
+	gameRoom.ID = fmt.Sprintf("GAMEROOM-%v", time.Now().Unix())
 
 	fbGameRoomRef := fbGameRoomsRef.Child(gameRoom.ID)
 	fbGameRoomRef.Set(context.Background(), gameRoom)
@@ -34,28 +52,18 @@ func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
 	return gameRoom, nil
 }
 
-func JoinGameRoom(roomID string, user string) (models.GameRoom, error) {
-
-	var ID models.GameRoom
-	if roomID == "" {
-		return ID, nil
+func UpdateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
+	if gameRoom.ID == "" {
+		return gameRoom, errors.New("game room id can't be blank")
 	}
 
 	fbGameRoomsRef := config.GetConfig().FbGameRoomsRef
-	fbGameRoomRef2 := fbGameRoomsRef.Child(roomID).Child("game_players")
-	fmt.Println(fbGameRoomRef2)
+	fbGameRoomRef := fbGameRoomsRef.Child(gameRoom.ID)
 
-	// a := "test"
-	// fbGameRoomRef2.Set(context.Background(), a)
-
-	fbGameRoomRef := fbGameRoomsRef.Child(roomID)
-
-	fmt.Println(user)
-	err := fbGameRoomRef.Get(context.Background(), &ID)
+	err := fbGameRoomRef.Set(context.Background(), gameRoom)
 	if err != nil {
-		return ID, err
+		return gameRoom, err
 	}
 
-	return ID, nil
-
+	return gameRoom, nil
 }

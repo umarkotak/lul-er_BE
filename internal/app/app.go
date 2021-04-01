@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/umarkotak/lul-er_BE/internal/config"
@@ -15,6 +16,7 @@ func Start() {
 
 	router := gin.New()
 	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
 	router.Use(CORSMiddleware())
 
 	// check server
@@ -25,9 +27,10 @@ func Start() {
 	router.POST("/users/login", controller.Login)
 
 	// game service
-
-	router.POST("/games/create_room", controller.CreateGameRoom)
-	router.POST("/games/join_room/:game-room-id", controller.GetGameRooms)
+	router.Use(AuthMiddleware())
+	router.GET("/game_rooms", controller.GetGameRooms)
+	router.POST("/game_rooms", controller.CreateGameRoom)
+	router.POST("/game_rooms/:game_room_id/join", controller.JoinGameRoom)
 
 	// router.Run(":" + getPort())
 	router.Run(":" + "3000")
@@ -48,6 +51,35 @@ func CORSMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		c.Next()
+	}
+}
+
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		bearerToken := c.Request.Header.Get("Authorization")
+
+		if bearerToken == "" {
+			utils.RenderError(c, 401, "Missing auth token")
+			return
+		}
+
+		splitBearerToken := strings.Split(bearerToken, " ")
+
+		if len(splitBearerToken) != 2 {
+			utils.RenderError(c, 401, "Invalid auth token format")
+			return
+		}
+
+		jwtToken := splitBearerToken[1]
+
+		result, err := utils.DecodeToken(jwtToken)
+		if err != nil {
+			utils.RenderError(c, 401, "Invalid auth token")
+			return
+		}
+
+		c.Set("LUL-USERNAME", result.Issuer)
 		c.Next()
 	}
 }
