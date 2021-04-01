@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/umarkotak/lul-er_BE/internal/models"
 	"github.com/umarkotak/lul-er_BE/internal/service"
@@ -8,43 +10,26 @@ import (
 )
 
 func GetGameRooms(c *gin.Context) {
-
-	a := c.Request.Header.Get("Authorization")
-	b := c.Param("game-room-id")
+	gameRoomID := c.Param("game-room-id")
 
 	var roomData models.GameRoom
-	// c.BindJSON(&roomData)
-	roomData.ID = b
+	roomData.ID = gameRoomID
 
-	username, err := service.DecodeToken(a)
-	if err != nil {
-		utils.RenderError(c, 401, err.Error())
-		return
-	}
-
-	// fmt.Println(username)
-	// fmt.Println(b)
-	result, err := service.JoinGameRoom(roomData, username)
+	results, err := service.GetGameRooms()
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
 		return
 	}
 
-	utils.RenderSuccess(c, result)
+	utils.RenderSuccess(c, results)
 }
 
 func CreateGameRoom(c *gin.Context) {
-
-	// a := c.Request.Header.Get("Authorization")
+	ctxUsername, _ := c.Get("LUL-USERNAME")
+	username := fmt.Sprintf("%v", ctxUsername)
 
 	var create_game_room models.GameRoom
 	c.BindJSON(&create_game_room)
-
-	username := "umarkotak"
-	// if err != nil {
-	// 	utils.RenderError(c, 401, err.Error())
-	// 	return
-	// }
 
 	create_game_room.RoomMasterUsername = username
 	result, err := service.CreateGameRoom(create_game_room)
@@ -54,4 +39,21 @@ func CreateGameRoom(c *gin.Context) {
 	}
 
 	utils.RenderSuccess(c, result)
+}
+
+func JoinGameRoom(c *gin.Context) {
+	ctxUsername, _ := c.Get("LUL-USERNAME")
+	username := fmt.Sprintf("%v", ctxUsername)
+	gameRoomID := c.Param("game_room_id")
+
+	var gameRoom models.GameRoom
+	gameRoom.ID = gameRoomID
+
+	results, err := service.JoinGameRoom(gameRoom, username)
+	if err != nil {
+		utils.RenderError(c, 400, err.Error())
+		return
+	}
+
+	utils.RenderSuccess(c, results)
 }

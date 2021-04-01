@@ -30,4 +30,5 @@ func RenderError(c *gin.Context, statusCode int, message string) {
 			"error":   message,
 		},
 	)
+	c.AbortWithStatus(statusCode)
 }
