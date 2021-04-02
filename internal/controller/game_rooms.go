@@ -10,7 +10,6 @@ import (
 )
 
 func GetGameRooms(c *gin.Context) {
-
 	results, err := service.GetGameRooms()
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
@@ -18,6 +17,17 @@ func GetGameRooms(c *gin.Context) {
 	}
 
 	utils.RenderSuccess(c, results)
+}
+
+func GetGameRoom(c *gin.Context) {
+	gameRoomID := c.Param("game_room_id")
+	result, err := service.GetGameRoom(gameRoomID)
+	if err != nil {
+		utils.RenderError(c, 400, err.Error())
+		return
+	}
+
+	utils.RenderSuccess(c, result)
 }
 
 func CreateGameRoom(c *gin.Context) {
@@ -45,11 +55,15 @@ func JoinGameRoom(c *gin.Context) {
 	var gameRoom models.GameRoom
 	gameRoom.ID = gameRoomID
 
-	results, err := service.JoinGameRoom(gameRoom, username)
+	result, err := service.JoinGameRoom(gameRoom, username)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
 		return
 	}
 
-	utils.RenderSuccess(c, results)
+	utils.RenderSuccess(c, result)
+}
+
+func LeaveGameRoom(c *gin.Context) {
+
 }

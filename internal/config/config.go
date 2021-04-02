@@ -15,6 +15,7 @@ type Config struct {
 	FbRootRef      *db.Ref
 	FbUsersRef     *db.Ref
 	FbGameRoomsRef *db.Ref
+	FbGameModesRef *db.Ref
 }
 
 var config Config
@@ -24,6 +25,7 @@ func InitConfig() {
 	fbRootRef := firebaseDB.NewRef("")
 	fbUsersRef := fbRootRef.Child("users")
 	fbGameRoomsRef := fbRootRef.Child("game_rooms")
+	fbGameModesRef := fbRootRef.Child("game_modes")
 
 	config = Config{
 		FirebaseApp:    firebaseApp,
@@ -31,6 +33,7 @@ func InitConfig() {
 		FbRootRef:      fbRootRef,
 		FbUsersRef:     fbUsersRef,
 		FbGameRoomsRef: fbGameRoomsRef,
+		FbGameModesRef: fbGameModesRef,
 	}
 }
 

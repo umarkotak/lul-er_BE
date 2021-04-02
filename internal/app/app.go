@@ -33,6 +33,7 @@ func Start() {
 	gameRouter := router.Group("/game_rooms")
 	gameRouter.Use(AuthMiddleware())
 	gameRouter.GET("/", controller.GetGameRooms)
+	gameRouter.GET("/:game_room_id", controller.GetGameRoom)
 	gameRouter.POST("/", controller.CreateGameRoom)
 	gameRouter.POST("/:game_room_id/join", controller.JoinGameRoom)
 
