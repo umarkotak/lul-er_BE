@@ -35,13 +35,15 @@ func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
 	gamePlayer := models.GamePlayer{
 		Username: gameRoom.RoomMasterUsername,
 		Status:   "joined",
+		Position: 1,
 	}
 	gameRoom.GamePlayers = map[string]models.GamePlayer{}
 	gameRoom.GamePlayers[gameRoom.RoomMasterUsername] = gamePlayer
 	gameRoom.CurrentPlayerCount = 1
 	gameRoom.Status = "initiated"
 	gameRoom.MaxPlayerCount = gameMode.MaxGamePlayers
-	gameRoom.GameBoard = gameMode.GameBoard
+	tempGameBoard := gameMode.GameBoard
+	gameRoom.GameBoard = tempGameBoard
 
 	gameRoom, err = repository.CreateGameRoom(gameRoom)
 	return gameRoom, err

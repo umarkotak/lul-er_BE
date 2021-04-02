@@ -36,6 +36,7 @@ func Start() {
 	gameRouter.GET("/:game_room_id", controller.GetGameRoom)
 	gameRouter.POST("/", controller.CreateGameRoom)
 	gameRouter.POST("/:game_room_id/join", controller.JoinGameRoom)
+	gameRouter.POST("/:game_room_id/move", controller.GamePlayerMove)
 
 	router.Run(":" + getPort())
 	// router.Run(":" + "3000")
