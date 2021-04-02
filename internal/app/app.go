@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -16,10 +17,17 @@ func Start() {
 
 	router := gin.New()
 	router.Use(gin.Logger())
-	router.Use(gin.Recovery())
+	router.Use(gin.CustomRecovery(
+		func(c *gin.Context, recovered interface{}) {
+			err, _ := recovered.(string)
+			utils.RenderError(c, 500, fmt.Sprintf("Internal server error: %v", err))
+			c.AbortWithStatus(500)
+		},
+	))
 	router.Use(CORSMiddleware())
 
 	// check server
+
 	router.GET("/ping", controller.Ping)
 
 	// user api
@@ -36,7 +44,9 @@ func Start() {
 	gameRouter.GET("/:game_room_id", controller.GetGameRoom)
 	gameRouter.POST("/", controller.CreateGameRoom)
 	gameRouter.POST("/:game_room_id/join", controller.JoinGameRoom)
-	gameRouter.POST("/:game_room_id/move", controller.GamePlayerMove)
+	gameRouter.POST("/:game_room_id/start", controller.StartGameRoom)
+	gameRouter.POST("/:game_room_id/generate_move", controller.GamePlayerGenerateMove)
+	gameRouter.POST("/:game_room_id/execute_move", controller.GamePlayerExecuteMove)
 
 	router.Run(":" + getPort())
 	// router.Run(":" + "3000")

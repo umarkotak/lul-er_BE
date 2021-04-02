@@ -33,9 +33,12 @@ func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
 	}
 
 	gamePlayer := models.GamePlayer{
-		Username: gameRoom.RoomMasterUsername,
-		Status:   "joined",
-		Position: 1,
+		Username:      gameRoom.RoomMasterUsername,
+		Status:        "active",
+		Position:      1,
+		TurnIndex:     1,
+		TurnStatus:    "active",
+		TurnSubStatus: "move_phase",
 	}
 	gameRoom.GamePlayers = map[string]models.GamePlayer{}
 	gameRoom.GamePlayers[gameRoom.RoomMasterUsername] = gamePlayer
@@ -43,6 +46,7 @@ func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
 	gameRoom.Status = "initiated"
 	gameRoom.MaxPlayerCount = gameMode.MaxGamePlayers
 	tempGameBoard := gameMode.GameBoard
+	tempGameBoard.GameFields["idx_1"].GamePlayers[gameRoom.RoomMasterUsername] = gamePlayer
 	gameRoom.GameBoard = tempGameBoard
 
 	gameRoom, err = repository.CreateGameRoom(gameRoom)
@@ -61,13 +65,65 @@ func JoinGameRoom(gameRoom models.GameRoom, username string) (models.GameRoom, e
 		return gameRoom, errors.New("game room not found")
 	}
 
+	if gameRoom.GamePlayers[username].Status != "" {
+		return gameRoom, errors.New("already joined room")
+	}
+
+	if gameRoom.Status != "initiated" {
+		return gameRoom, errors.New("game already started")
+	}
+
+	currentLen := len(gameRoom.GamePlayers)
+	turnIndex := currentLen + 1
+
 	gamePlayer := models.GamePlayer{
-		Username: username,
-		Status:   "joined",
+		Username:      username,
+		Status:        "active",
+		Position:      1,
+		TurnIndex:     turnIndex,
+		TurnStatus:    "waiting",
+		TurnSubStatus: "waiting",
 	}
 	gameRoom.GamePlayers[username] = gamePlayer
+	tempGameBoard := gameRoom.GameBoard
+	tempGameBoard.GameFields["idx_1"].GamePlayers[username] = gamePlayer
+	gameRoom.GameBoard = tempGameBoard
+	gameRoom.CurrentPlayerCount += 1
 
-	repository.UpdateGameRoom(gameRoom)
+	gameRoom, err = repository.UpdateGameRoom(gameRoom)
+	if err != nil {
+		return gameRoom, errors.New(fmt.Sprintf("Error UpdateGameRoom: %v", err))
+	}
+
+	return gameRoom, nil
+}
+
+func LeaveGameRoom(gameRoom models.GameRoom, username string) (models.GameRoom, error) {
+	return gameRoom, nil
+}
+
+func StartGameRoom(gameRoom models.GameRoom, username string) (models.GameRoom, error) {
+	gameRoom, err := repository.GetGameRoom(gameRoom.ID)
+
+	if err != nil {
+		log.Errorf(context.Background(), "Error GetGameRoom %v", err)
+		return gameRoom, err
+	}
+
+	if gameRoom.ID == "" {
+		return gameRoom, errors.New("game room not found")
+	}
+
+	if gameRoom.RoomMasterUsername != username {
+		return gameRoom, errors.New("only room master can start the game")
+	}
+
+	gameRoom.Status = "started"
+
+	gameRoom, err = repository.UpdateGameRoom(gameRoom)
+	if err != nil {
+		return gameRoom, errors.New(fmt.Sprintf("Error UpdateGameRoom: %v", err))
+	}
 
 	return gameRoom, nil
 }

@@ -7,7 +7,7 @@ type GameRoom struct {
 	Mode               string                `json:"mode"`
 	CurrentPlayerCount int                   `json:"current_player_count"`
 	MaxPlayerCount     int                   `json:"max_player_count"`
-	Status             string                `json:"status"`
+	Status             string                `json:"status"` // [initiated, started, finished, closed]
 	GamePlayers        map[string]GamePlayer `json:"game_players"`
 	GameBoard          GameBoard             `json:"game_board"`
 }

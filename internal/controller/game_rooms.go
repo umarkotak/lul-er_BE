@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/umarkotak/lul-er_BE/internal/models"
-	"github.com/umarkotak/lul-er_BE/internal/repository"
 	"github.com/umarkotak/lul-er_BE/internal/service"
 	"github.com/umarkotak/lul-er_BE/internal/utils"
 )
@@ -65,34 +64,70 @@ func JoinGameRoom(c *gin.Context) {
 	utils.RenderSuccess(c, result)
 }
 
-func LeaveGameRoom(c *gin.Context) {
-
-}
-
-func GamePlayerMove(c *gin.Context) {
+func StartGameRoom(c *gin.Context) {
 	ctxUsername, _ := c.Get("LUL-USERNAME")
 	username := fmt.Sprintf("%v", ctxUsername)
 	gameRoomID := c.Param("game_room_id")
 
-	gameRoom, _ := repository.GetGameRoom(gameRoomID)
-	gamePlayer := gameRoom.GamePlayers[username]
+	var gameRoom models.GameRoom
+	gameRoom.ID = gameRoomID
 
-	moveCount := 5
-
-	oldFieldIdx := fmt.Sprintf("idx_%v", gamePlayer.Position)
-	gamePlayer.Position = gamePlayer.Position + moveCount
-
-	gameRoom.GamePlayers[username] = gamePlayer
-
-	fieldIdx := fmt.Sprintf("idx_%v", gamePlayer.Position)
-	movedGamePlayer := models.GamePlayer{
-		Username: username,
-		Status:   "active",
+	result, err := service.StartGameRoom(gameRoom, username)
+	if err != nil {
+		utils.RenderError(c, 400, err.Error())
+		return
 	}
-	gameRoom.GameBoard.GameFields[fieldIdx].GamePlayers[username] = movedGamePlayer
-	gameRoom.GameBoard.GameFields[oldFieldIdx].GamePlayers[username] = models.GamePlayer{}
 
-	repository.UpdateGameRoom(gameRoom)
+	utils.RenderSuccess(c, result)
+}
 
-	utils.RenderSuccess(c, gameRoom)
+func LeaveGameRoom(c *gin.Context) {
+	ctxUsername, _ := c.Get("LUL-USERNAME")
+	username := fmt.Sprintf("%v", ctxUsername)
+	gameRoomID := c.Param("game_room_id")
+
+	var gameRoom models.GameRoom
+	gameRoom.ID = gameRoomID
+
+	result, err := service.LeaveGameRoom(gameRoom, username)
+	if err != nil {
+		utils.RenderError(c, 400, err.Error())
+		return
+	}
+
+	utils.RenderSuccess(c, result)
+}
+
+func GamePlayerGenerateMove(c *gin.Context) {
+	ctxUsername, _ := c.Get("LUL-USERNAME")
+	username := fmt.Sprintf("%v", ctxUsername)
+	gameRoomID := c.Param("game_room_id")
+
+	var gameRoom models.GameRoom
+	gameRoom.ID = gameRoomID
+
+	result, err := service.GenerateMove(gameRoom, username)
+	if err != nil {
+		utils.RenderError(c, 400, err.Error())
+		return
+	}
+
+	utils.RenderSuccess(c, result)
+}
+
+func GamePlayerExecuteMove(c *gin.Context) {
+	ctxUsername, _ := c.Get("LUL-USERNAME")
+	username := fmt.Sprintf("%v", ctxUsername)
+	gameRoomID := c.Param("game_room_id")
+
+	var gameRoom models.GameRoom
+	gameRoom.ID = gameRoomID
+
+	result, err := service.ExecuteMove(gameRoom, username)
+	if err != nil {
+		utils.RenderError(c, 400, err.Error())
+		return
+	}
+
+	utils.RenderSuccess(c, result)
 }
