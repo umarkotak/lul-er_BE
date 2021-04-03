@@ -21,13 +21,19 @@ func GetGameRooms(c *gin.Context) {
 
 func GetGameRoom(c *gin.Context) {
 	gameRoomID := c.Param("game_room_id")
-	result, err := service.GetGameRoom(gameRoomID)
+	gameRoom, err := service.GetGameRoom(gameRoomID)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
 		return
 	}
 
-	utils.RenderSuccess(c, result)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+	if err != nil {
+		utils.RenderError(c, 400, err.Error())
+		return
+	}
+
+	utils.RenderSuccess(c, serializedGameRoom)
 }
 
 func CreateGameRoom(c *gin.Context) {
