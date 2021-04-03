@@ -22,6 +22,11 @@ func GenerateMove(gameRoom models.GameRoom, username string) (models.GameRoom, e
 
 	moveCount := utils.GenerateRandomNumber(1, 6)
 	gamePlayer := gameRoom.GamePlayers[username]
+
+	if gamePlayer.TurnStatus != "active" {
+		return gameRoom, errors.New("only active player can execute action")
+	}
+
 	gamePlayer.MoveSize = moveCount
 	gamePlayer.TurnSubStatus = "item_phase"
 	gameRoom.GamePlayers[username] = gamePlayer
@@ -57,6 +62,10 @@ func ExecuteMove(gameRoom models.GameRoom, username string) (models.GameRoom, er
 	}
 
 	gamePlayer := gameRoom.GamePlayers[username]
+
+	if gamePlayer.TurnStatus != "active" {
+		return gameRoom, errors.New("only active player can execute action")
+	}
 
 	oldFieldIdx := fmt.Sprintf("idx_%v", gamePlayer.Position)
 	gamePlayer.Position = gamePlayer.Position + gamePlayer.MoveSize
