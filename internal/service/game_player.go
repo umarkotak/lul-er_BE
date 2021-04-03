@@ -61,8 +61,9 @@ func ExecuteMove(gameRoom models.GameRoom, username string) (models.GameRoom, er
 	oldFieldIdx := fmt.Sprintf("idx_%v", gamePlayer.Position)
 	gamePlayer.Position = gamePlayer.Position + gamePlayer.MoveSize
 	gamePlayer.MoveSize = 0
-	gamePlayer.Status = "waiting"
+	gamePlayer.TurnStatus = "waiting"
 	gamePlayer.TurnSubStatus = "waiting"
+	turnIndex := gamePlayer.TurnIndex
 
 	gameRoom.GamePlayers[username] = gamePlayer
 
@@ -70,7 +71,29 @@ func ExecuteMove(gameRoom models.GameRoom, username string) (models.GameRoom, er
 	gameRoom.GameBoard.GameFields[fieldIdx].GamePlayers[username] = gamePlayer
 	delete(gameRoom.GameBoard.GameFields[oldFieldIdx].GamePlayers, username)
 
-	// TODO: Implement changing turn to next player
+	// changing turn to next player
+	var nextIndex int
+	if turnIndex == len(gameRoom.GamePlayers) {
+		nextIndex = 1
+	} else {
+		nextIndex = turnIndex + 1
+	}
+
+	var nextGamePlayer models.GamePlayer
+
+	for _, tempGamePlayer := range gameRoom.GamePlayers {
+		if tempGamePlayer.TurnIndex == nextIndex {
+			nextGamePlayer = tempGamePlayer
+			break
+		}
+	}
+
+	if nextGamePlayer.Username == "" {
+		return gameRoom, errors.New("next game player not found")
+	}
+	nextGamePlayer.TurnStatus = "active"
+	nextGamePlayer.TurnSubStatus = "move_phase"
+	gameRoom.GamePlayers[nextGamePlayer.Username] = nextGamePlayer
 
 	repository.UpdateGameRoom(gameRoom)
 

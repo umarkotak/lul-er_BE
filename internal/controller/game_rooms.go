@@ -121,6 +121,10 @@ func GamePlayerGenerateMove(c *gin.Context) {
 	utils.RenderSuccess(c, result)
 }
 
+func GamePlayerExecuteItem(c *gin.Context) {
+	utils.RenderSuccess(c, map[string]interface{}{})
+}
+
 func GamePlayerExecuteMove(c *gin.Context) {
 	ctxUsername, _ := c.Get("LUL-USERNAME")
 	username := fmt.Sprintf("%v", ctxUsername)
