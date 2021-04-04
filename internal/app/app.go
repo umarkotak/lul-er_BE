@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	nice "github.com/ekyoung/gin-nice-recovery"
 	"github.com/gin-gonic/gin"
 	"github.com/umarkotak/lul-er_BE/internal/config"
 	"github.com/umarkotak/lul-er_BE/internal/controller"
@@ -17,13 +18,7 @@ func Start() {
 
 	router := gin.New()
 	router.Use(gin.Logger())
-	router.Use(gin.CustomRecovery(
-		func(c *gin.Context, recovered interface{}) {
-			err, _ := recovered.(string)
-			utils.RenderError(c, 500, fmt.Sprintf("Internal server error: %v", err))
-			c.AbortWithStatus(500)
-		},
-	))
+	router.Use(nice.Recovery(recoveryHandler))
 	router.Use(CORSMiddleware())
 
 	// check server
@@ -58,6 +53,11 @@ func getPort() string {
 		log.Fatal("$PORT must be set")
 	}
 	return port
+}
+
+func recoveryHandler(c *gin.Context, err interface{}) {
+	utils.RenderError(c, 500, fmt.Sprintf("Internal server error: %v", err))
+	c.AbortWithStatus(500)
 }
 
 func CORSMiddleware() gin.HandlerFunc {
