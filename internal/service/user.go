@@ -32,9 +32,17 @@ func Register(reqUser models.User) (models.User, error) {
 		return user, err
 	}
 
+	pw, err := utils.EncodePassword(reqUser.Password)
+
+	if err != nil {
+		log.Errorf(context.Background(), "Error EncodeToken %v", err)
+		return user, err
+	}
+
 	newUser := models.User{
+
 		Username:         reqUser.Username,
-		Password:         reqUser.Password,
+		HashPassword:     pw,
 		Email:            reqUser.Email,
 		AuthToken:        reqUser.AuthToken,
 		ActiveGameRoomID: "",
@@ -58,8 +66,14 @@ func Login(reqUser models.User) (models.User, error) {
 		return user, err
 	}
 
-	if user.Username != reqUser.Username || user.Password != reqUser.Password {
-		return user, errors.New("username or password is wrong")
+	if user.Username != reqUser.Username {
+		return user, errors.New("username is wrong")
+	}
+
+	isPassword := utils.DecodePassword(reqUser.Password, user.HashPassword)
+
+	if !isPassword {
+		return user, errors.New("Invalid Password")
 	}
 
 	userData := models.User{
