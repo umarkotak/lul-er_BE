@@ -43,8 +43,8 @@ func Start() {
 	gameRouter.POST("/:game_room_id/generate_move", controller.GamePlayerGenerateMove)
 	gameRouter.POST("/:game_room_id/execute_move", controller.GamePlayerExecuteMove)
 
-	router.Run(":" + getPort())
-	// router.Run(":" + "3000")
+	// router.Run(":" + getPort())
+	router.Run(":" + "3000")
 }
 
 func getPort() string {
