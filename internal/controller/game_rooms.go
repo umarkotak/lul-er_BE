@@ -44,13 +44,15 @@ func CreateGameRoom(c *gin.Context) {
 	c.BindJSON(&create_game_room)
 
 	create_game_room.RoomMasterUsername = username
-	result, err := service.CreateGameRoom(create_game_room)
+	gameRoom, err := service.CreateGameRoom(create_game_room)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
 		return
 	}
 
-	utils.RenderSuccess(c, result)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+
+	utils.RenderSuccess(c, serializedGameRoom)
 }
 
 func JoinGameRoom(c *gin.Context) {
@@ -61,13 +63,15 @@ func JoinGameRoom(c *gin.Context) {
 	var gameRoom models.GameRoom
 	gameRoom.ID = gameRoomID
 
-	result, err := service.JoinGameRoom(gameRoom, username)
+	gameRoom, err := service.JoinGameRoom(gameRoom, username)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
 		return
 	}
 
-	utils.RenderSuccess(c, result)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+
+	utils.RenderSuccess(c, serializedGameRoom)
 }
 
 func StartGameRoom(c *gin.Context) {
@@ -78,13 +82,15 @@ func StartGameRoom(c *gin.Context) {
 	var gameRoom models.GameRoom
 	gameRoom.ID = gameRoomID
 
-	result, err := service.StartGameRoom(gameRoom, username)
+	gameRoom, err := service.StartGameRoom(gameRoom, username)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
 		return
 	}
 
-	utils.RenderSuccess(c, result)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+
+	utils.RenderSuccess(c, serializedGameRoom)
 }
 
 func LeaveGameRoom(c *gin.Context) {
@@ -112,13 +118,15 @@ func GamePlayerGenerateMove(c *gin.Context) {
 	var gameRoom models.GameRoom
 	gameRoom.ID = gameRoomID
 
-	result, err := service.GenerateMove(gameRoom, username)
+	gameRoom, err := service.GenerateMove(gameRoom, username)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
 		return
 	}
 
-	utils.RenderSuccess(c, result)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+
+	utils.RenderSuccess(c, serializedGameRoom)
 }
 
 func GamePlayerExecuteItem(c *gin.Context) {
@@ -133,11 +141,13 @@ func GamePlayerExecuteMove(c *gin.Context) {
 	var gameRoom models.GameRoom
 	gameRoom.ID = gameRoomID
 
-	result, err := service.ExecuteMove(gameRoom, username)
+	gameRoom, err := service.ExecuteMove(gameRoom, username)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
 		return
 	}
 
-	utils.RenderSuccess(c, result)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+
+	utils.RenderSuccess(c, serializedGameRoom)
 }

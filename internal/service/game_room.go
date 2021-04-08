@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/umarkotak/lul-er_BE/internal/models"
 	"github.com/umarkotak/lul-er_BE/internal/repository"
@@ -12,6 +13,10 @@ import (
 
 func GetGameRooms() ([]models.GameRoom, error) {
 	gameRooms, err := repository.GetGameRooms()
+
+	sort.Slice(gameRooms[:], func(i, j int) bool {
+		return gameRooms[i].ID < gameRooms[j].ID
+	})
 
 	return gameRooms, err
 }
@@ -30,6 +35,10 @@ func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
 
 	if gameMode.ID == "" {
 		return gameRoom, errors.New(fmt.Sprintf("game mode %v not found", gameRoom.Mode))
+	}
+
+	if gameRoom.RoomTitle == "" {
+		return gameRoom, errors.New(fmt.Sprintf("game room title can't be blank"))
 	}
 
 	gamePlayer := models.GamePlayer{
