@@ -1,21 +1,20 @@
 package service
 
 import (
-	"context"
 	"errors"
+	"log"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/umarkotak/lul-er_BE/internal/models"
 	"github.com/umarkotak/lul-er_BE/internal/repository"
 	"github.com/umarkotak/lul-er_BE/internal/utils"
-	"google.golang.org/appengine/log"
 )
 
 func Register(reqUser models.User) (models.User, error) {
 	user, err := repository.GetUserByUsername(reqUser.Username)
 
 	if err != nil {
-		log.Errorf(context.Background(), "Error GetUserByUsername %v", err)
+		log.Printf("Error GetUserByUsername %v", err)
 		return user, err
 	}
 
@@ -28,14 +27,14 @@ func Register(reqUser models.User) (models.User, error) {
 	}
 	reqUser.AuthToken, err = utils.EncodeToken(userTokenClaim)
 	if err != nil {
-		log.Errorf(context.Background(), "Error EncodeToken %v", err)
+		log.Printf("Error EncodeToken %v", err)
 		return user, err
 	}
 
 	pw, err := utils.EncodePassword(reqUser.Password)
 
 	if err != nil {
-		log.Errorf(context.Background(), "Error EncodeToken %v", err)
+		log.Printf("Error EncodeToken %v", err)
 		return user, err
 	}
 
@@ -50,7 +49,7 @@ func Register(reqUser models.User) (models.User, error) {
 
 	_, err = repository.CreateUser(newUser)
 	if err != nil {
-		log.Errorf(context.Background(), "Error CreateUser %v", err)
+		log.Printf("Error CreateUser %v", err)
 		return user, err
 	}
 
@@ -62,7 +61,7 @@ func Login(reqUser models.User) (models.User, error) {
 	user, err := repository.GetUserByUsername(reqUser.Username)
 
 	if err != nil {
-		log.Errorf(context.Background(), "Error GetUserByUsername %v", err)
+		log.Printf("Error GetUserByUsername %v", err)
 		return user, err
 	}
 

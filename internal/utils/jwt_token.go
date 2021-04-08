@@ -1,10 +1,9 @@
 package utils
 
 import (
-	"context"
+	"log"
 
 	"github.com/dgrijalva/jwt-go"
-	"google.golang.org/appengine/log"
 )
 
 const JWT_SECRET = "secret"
@@ -19,7 +18,7 @@ func EncodeToken(jwtClaim jwt.StandardClaims) (string, error) {
 	token, err := claim.SignedString([]byte(JWT_SECRET))
 
 	if err != nil {
-		log.Errorf(context.Background(), "Error Token %v", err)
+		log.Printf("Error Token %v", err)
 		return "", err
 	}
 

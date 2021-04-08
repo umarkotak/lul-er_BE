@@ -1,14 +1,13 @@
 package service
 
 import (
-	"context"
 	"errors"
 	"fmt"
+	"log"
 	"sort"
 
 	"github.com/umarkotak/lul-er_BE/internal/models"
 	"github.com/umarkotak/lul-er_BE/internal/repository"
-	"google.golang.org/appengine/log"
 )
 
 func GetGameRooms() ([]models.GameRoom, error) {
@@ -66,7 +65,7 @@ func JoinGameRoom(gameRoom models.GameRoom, username string) (models.GameRoom, e
 	gameRoom, err := repository.GetGameRoom(gameRoom.ID)
 
 	if err != nil {
-		log.Errorf(context.Background(), "Error GetGameRoom %v", err)
+		log.Printf("Error GetGameRoom %v", err)
 		return gameRoom, err
 	}
 
@@ -115,7 +114,7 @@ func StartGameRoom(gameRoom models.GameRoom, username string) (models.GameRoom, 
 	gameRoom, err := repository.GetGameRoom(gameRoom.ID)
 
 	if err != nil {
-		log.Errorf(context.Background(), "Error GetGameRoom %v", err)
+		log.Printf("Error GetGameRoom %v", err)
 		return gameRoom, err
 	}
 
