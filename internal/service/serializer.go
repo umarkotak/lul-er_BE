@@ -19,9 +19,6 @@ func SerializeGameRoomDetail(gameRoom models.GameRoom, username string) (models.
 		delete(gamePlayers, "placeholder")
 		for _, gamePlayer := range gamePlayers {
 			fieldSerializedGamePlayers = append(fieldSerializedGamePlayers, gamePlayer)
-			if gamePlayer.Username == username {
-				myPlayer = gamePlayer
-			}
 		}
 		sort.Slice(fieldSerializedGamePlayers[:], func(i, j int) bool {
 			return fieldSerializedGamePlayers[i].TurnIndex < fieldSerializedGamePlayers[j].TurnIndex
@@ -39,6 +36,9 @@ func SerializeGameRoomDetail(gameRoom models.GameRoom, username string) (models.
 	serializedGamePlayers := []models.GamePlayer{}
 	for _, gamePlayer := range gameRoom.GamePlayers {
 		serializedGamePlayers = append(serializedGamePlayers, gamePlayer)
+		if gamePlayer.Username == username {
+			myPlayer = gamePlayer
+		}
 	}
 
 	sort.Slice(serializedGamePlayers[:], func(i, j int) bool {
