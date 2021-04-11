@@ -73,8 +73,12 @@ func JoinGameRoom(gameRoom models.GameRoom, username string) (models.GameRoom, e
 		return gameRoom, errors.New("game room not found")
 	}
 
+	// if gameRoom.GamePlayers[username].Status != "" {
+	// 	return gameRoom, errors.New("already joined room")
+	// }
+
 	if gameRoom.GamePlayers[username].Status != "" {
-		return gameRoom, errors.New("already joined room")
+		return gameRoom, nil
 	}
 
 	if gameRoom.Status != "initiated" {

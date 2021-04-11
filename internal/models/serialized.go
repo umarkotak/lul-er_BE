@@ -22,4 +22,5 @@ type SerializedGameRoom struct {
 	Status             string               `json:"status"`
 	GamePlayers        []GamePlayer         `json:"game_players"`
 	GameBoard          SerializedGameBoaard `json:"game_board"`
+	MyPlayer           GamePlayer           `json:"my_player"`
 }

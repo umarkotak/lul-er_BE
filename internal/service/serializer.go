@@ -7,24 +7,31 @@ import (
 	"github.com/umarkotak/lul-er_BE/internal/models"
 )
 
-func SerializeGameRoomDetail(gameRoom models.GameRoom) (models.SerializedGameRoom, error) {
+func SerializeGameRoomDetail(gameRoom models.GameRoom, username string) (models.SerializedGameRoom, error) {
+	var myPlayer models.GamePlayer
 	serializedGameFields := []models.SerializedGameField{}
 
 	for i := 1; i <= 100; i++ {
 		fieldIdx := fmt.Sprintf("idx_%v", i)
 		gameField := gameRoom.GameBoard.GameFields[fieldIdx]
 		gamePlayers := gameField.GamePlayers
-		serializedGamePlayer := []models.GamePlayer{}
+		fieldSerializedGamePlayers := []models.GamePlayer{}
 		delete(gamePlayers, "placeholder")
 		for _, gamePlayer := range gamePlayers {
-			serializedGamePlayer = append(serializedGamePlayer, gamePlayer)
+			fieldSerializedGamePlayers = append(fieldSerializedGamePlayers, gamePlayer)
+			if gamePlayer.Username == username {
+				myPlayer = gamePlayer
+			}
 		}
+		sort.Slice(fieldSerializedGamePlayers[:], func(i, j int) bool {
+			return fieldSerializedGamePlayers[i].TurnIndex < fieldSerializedGamePlayers[j].TurnIndex
+		})
 		serializedGameField := models.SerializedGameField{
 			Index:       gameField.Index,
 			IndexNo:     gameField.IndexNo,
 			FieldType:   gameField.FieldType,
 			FieldEffect: gameField.FieldEffect,
-			GamePlayers: serializedGamePlayer,
+			GamePlayers: fieldSerializedGamePlayers,
 		}
 		serializedGameFields = append(serializedGameFields, serializedGameField)
 	}
@@ -52,6 +59,7 @@ func SerializeGameRoomDetail(gameRoom models.GameRoom) (models.SerializedGameRoo
 		Status:             gameRoom.Status,
 		GamePlayers:        serializedGamePlayers,
 		GameBoard:          serialiedGameBoard,
+		MyPlayer:           myPlayer,
 	}
 
 	return serializedGameRoom, nil

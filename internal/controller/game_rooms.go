@@ -20,6 +20,9 @@ func GetGameRooms(c *gin.Context) {
 }
 
 func GetGameRoom(c *gin.Context) {
+	ctxUsername, _ := c.Get("LUL-USERNAME")
+	username := fmt.Sprintf("%v", ctxUsername)
+
 	gameRoomID := c.Param("game_room_id")
 	gameRoom, err := service.GetGameRoom(gameRoomID)
 	if err != nil {
@@ -27,7 +30,7 @@ func GetGameRoom(c *gin.Context) {
 		return
 	}
 
-	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom, username)
 	if err != nil {
 		utils.RenderError(c, 400, err.Error())
 		return
@@ -50,7 +53,7 @@ func CreateGameRoom(c *gin.Context) {
 		return
 	}
 
-	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom, username)
 
 	utils.RenderSuccess(c, serializedGameRoom)
 }
@@ -69,7 +72,7 @@ func JoinGameRoom(c *gin.Context) {
 		return
 	}
 
-	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom, username)
 
 	utils.RenderSuccess(c, serializedGameRoom)
 }
@@ -88,7 +91,7 @@ func StartGameRoom(c *gin.Context) {
 		return
 	}
 
-	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom, username)
 
 	utils.RenderSuccess(c, serializedGameRoom)
 }
@@ -124,7 +127,7 @@ func GamePlayerGenerateMove(c *gin.Context) {
 		return
 	}
 
-	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom, username)
 
 	utils.RenderSuccess(c, serializedGameRoom)
 }
@@ -147,7 +150,7 @@ func GamePlayerExecuteMove(c *gin.Context) {
 		return
 	}
 
-	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom)
+	serializedGameRoom, err := service.SerializeGameRoomDetail(gameRoom, username)
 
 	utils.RenderSuccess(c, serializedGameRoom)
 }
