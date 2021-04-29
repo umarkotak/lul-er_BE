@@ -58,6 +58,7 @@ func CreateGameRoom(gameRoom models.GameRoom) (models.GameRoom, error) {
 	gameRoom.GameBoard = tempGameBoard
 
 	gameRoom, err = repository.CreateGameRoom(gameRoom)
+
 	return gameRoom, err
 }
 

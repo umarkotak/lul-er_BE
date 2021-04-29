@@ -8,7 +8,7 @@ import (
 )
 
 func SerializeGameRoomDetail(gameRoom models.GameRoom, username string) (models.SerializedGameRoom, error) {
-	var myPlayer models.GamePlayer
+	var myPlayer, activePlayer models.GamePlayer
 	serializedGameFields := []models.SerializedGameField{}
 
 	for i := 1; i <= 100; i++ {
@@ -29,6 +29,7 @@ func SerializeGameRoomDetail(gameRoom models.GameRoom, username string) (models.
 			FieldType:   gameField.FieldType,
 			FieldEffect: gameField.FieldEffect,
 			GamePlayers: fieldSerializedGamePlayers,
+			GameEffect:  gameField.GameEffect,
 		}
 		serializedGameFields = append(serializedGameFields, serializedGameField)
 	}
@@ -38,6 +39,10 @@ func SerializeGameRoomDetail(gameRoom models.GameRoom, username string) (models.
 		serializedGamePlayers = append(serializedGamePlayers, gamePlayer)
 		if gamePlayer.Username == username {
 			myPlayer = gamePlayer
+		}
+
+		if gamePlayer.TurnStatus == "active" {
+			activePlayer = gamePlayer
 		}
 	}
 
@@ -60,6 +65,7 @@ func SerializeGameRoomDetail(gameRoom models.GameRoom, username string) (models.
 		GamePlayers:        serializedGamePlayers,
 		GameBoard:          serialiedGameBoard,
 		MyPlayer:           myPlayer,
+		ActivePlayer:       activePlayer,
 	}
 
 	return serializedGameRoom, nil

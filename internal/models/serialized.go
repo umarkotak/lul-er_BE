@@ -6,6 +6,7 @@ type SerializedGameField struct {
 	FieldType   string       `json:"field_type"`
 	FieldEffect string       `json:"field_effect"`
 	GamePlayers []GamePlayer `json:"game_players"`
+	GameEffect  GameEffect   `json:"effect"`
 }
 
 type SerializedGameBoaard struct {
@@ -23,4 +24,5 @@ type SerializedGameRoom struct {
 	GamePlayers        []GamePlayer         `json:"game_players"`
 	GameBoard          SerializedGameBoaard `json:"game_board"`
 	MyPlayer           GamePlayer           `json:"my_player"`
+	ActivePlayer       GamePlayer           `json:"active_player"`
 }

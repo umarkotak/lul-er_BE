@@ -20,6 +20,10 @@ func GenerateMove(gameRoom models.GameRoom, username string) (models.GameRoom, e
 		return gameRoom, errors.New("game room not found")
 	}
 
+	if gameRoom.Status == "finished" {
+		return gameRoom, errors.New("game already finished")
+	}
+
 	moveCount := utils.GenerateRandomNumber(1, 6)
 	gamePlayer := gameRoom.GamePlayers[username]
 
@@ -47,6 +51,10 @@ func ExecuteItem(gameRoom models.GameRoom, username string) (models.GameRoom, er
 		return gameRoom, errors.New("game room not found")
 	}
 
+	if gameRoom.Status == "finished" {
+		return gameRoom, errors.New("game already finished")
+	}
+
 	return gameRoom, nil
 }
 
@@ -59,6 +67,10 @@ func ExecuteMove(gameRoom models.GameRoom, username string) (models.GameRoom, er
 
 	if gameRoom.ID == "" {
 		return gameRoom, errors.New("game room not found")
+	}
+
+	if gameRoom.Status == "finished" {
+		return gameRoom, errors.New("game already finished")
 	}
 
 	gamePlayer := gameRoom.GamePlayers[username]
@@ -74,11 +86,27 @@ func ExecuteMove(gameRoom models.GameRoom, username string) (models.GameRoom, er
 	gamePlayer.TurnSubStatus = "waiting"
 	turnIndex := gamePlayer.TurnIndex
 
-	gameRoom.GamePlayers[username] = gamePlayer
-
 	fieldIdx := fmt.Sprintf("idx_%v", gamePlayer.Position)
-	gameRoom.GameBoard.GameFields[fieldIdx].GamePlayers[username] = gamePlayer
+
+	if gameRoom.GameBoard.GameFields[fieldIdx].FieldType == "event" {
+		currentField := gameRoom.GameBoard.GameFields[fieldIdx]
+
+		switch currentField.GameEffect.EffectType {
+		case "move_modifier":
+			gamePlayer.Position = gamePlayer.Position + currentField.GameEffect.EffectValue
+		case "move_teleport":
+			gamePlayer.Position = currentField.GameEffect.EffectValue
+		case "get_random_items":
+		case "get_item":
+		default:
+		}
+	}
+
+	aferEffectFieldIdx := fmt.Sprintf("idx_%v", gamePlayer.Position)
+
+	gameRoom.GameBoard.GameFields[aferEffectFieldIdx].GamePlayers[username] = gamePlayer
 	delete(gameRoom.GameBoard.GameFields[oldFieldIdx].GamePlayers, username)
+	gameRoom.GamePlayers[username] = gamePlayer
 
 	// changing turn to next player
 	var nextIndex int

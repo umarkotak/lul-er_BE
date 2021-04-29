@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -44,13 +43,12 @@ func Start() {
 	gameRouter.POST("/:game_room_id/execute_move", controller.GamePlayerExecuteMove)
 
 	router.Run(":" + getPort())
-	// router.Run(":" + "3000")
 }
 
 func getPort() string {
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("$PORT must be set")
+		return "3000"
 	}
 	return port
 }

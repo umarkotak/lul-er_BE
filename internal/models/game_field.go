@@ -6,4 +6,5 @@ type GameField struct {
 	FieldType   string                `json:"field_type"`
 	FieldEffect string                `json:"field_effect"`
 	GamePlayers map[string]GamePlayer `json:"game_players"`
+	GameEffect  GameEffect            `json:"effect"`
 }
